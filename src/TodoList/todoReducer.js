@@ -1,22 +1,35 @@
-// src/TodoList/todoReducer.js
+// src/reducers/todoReducer.js
 const initialState = {
-    works: JSON.parse(localStorage.getItem('workList')) || [],
+    works: [],
   };
   
   const todoReducer = (state = initialState, action) => {
     switch (action.type) {
       case 'ADD_TODO':
-        const newWorkList = [...state.works, action.payload];
-        localStorage.setItem('workList', JSON.stringify(newWorkList));
-        return { ...state, works: newWorkList };
+        return {
+          ...state,
+          works: [...state.works, { text: action.payload, completed: false }], 
+        };
       case 'REMOVE_TODO':
-        const filteredWorks = state.works.filter(item => item !== action.payload);
-        localStorage.setItem('workList', JSON.stringify(filteredWorks));
-        return { ...state, works: filteredWorks };
+        return {
+          ...state,
+          works: state.works.filter((item) => item.text !== action.payload),
+        };
       case 'EDIT_TODO':
-        const updatedWorks = state.works.map((item, idx) => idx === action.index ? action.payload : item);
-        localStorage.setItem('workList', JSON.stringify(updatedWorks));
-        return { ...state, works: updatedWorks };
+        const updatedWorks = state.works.map((item, idx) => 
+          idx === action.payload.index ? { ...item, text: action.payload.value } : item
+        );
+        return {
+          ...state,
+          works: updatedWorks,
+        };
+      case 'TOGGLE_COMPLETE':
+        return {
+          ...state,
+          works: state.works.map((item, idx) =>
+            idx === action.payload ? { ...item, completed: !item.completed } : item
+          ),
+        };
       default:
         return state;
     }

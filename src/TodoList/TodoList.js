@@ -1,33 +1,52 @@
-// src/TodoList/TodoList.js
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+
 const TodoList = () => {
-  const works = useSelector(state => state.todo.works);
   const dispatch = useDispatch();
+  const works = useSelector(state => state.todo.works);
   const [work, setWork] = useState("");
-  const [editValue, setEditValue] = useState("");
   const [isEditing, setIsEditing] = useState(null);
+  const [editValue, setEditValue] = useState("");
+
+  useEffect(() => {
+    const storageWorkList = JSON.parse(localStorage.getItem('workList'));
+    if (storageWorkList) {
+      storageWorkList.forEach(work => {
+        dispatch({ type: 'ADD_TODO', payload: work.text }); 
+      });
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem('workList', JSON.stringify(works));
+  }, [works]);
 
   const addWork = () => {
-    if (!work) return;
-    dispatch({ type: 'ADD_TODO', payload: work });
-    setWork("");
+    if (work) {
+      dispatch({ type: 'ADD_TODO', payload: work });
+      setWork("");
+    }
   };
 
-  const removeJob = (workToRemove) => {
+  const removeWork = (workToRemove) => {
     dispatch({ type: 'REMOVE_TODO', payload: workToRemove });
   };
 
   const saveEdit = (index) => {
-    dispatch({ type: 'EDIT_TODO', payload: editValue, index });
+    dispatch({ type: 'EDIT_TODO', payload: { index, value: editValue } });
     setIsEditing(null);
     setEditValue("");
   };
 
+  const toggleComplete = (index) => {
+    dispatch({ type: 'TOGGLE_COMPLETE', payload: index });
+  };
+
   return (
     <div>
-      <h2>To-do List</h2>
+      <h1>To-do List</h1>
       <input 
         value={work} 
         onChange={e => setWork(e.target.value)} 
@@ -48,12 +67,23 @@ const TodoList = () => {
               </>
             ) : (
               <>
-                <label>{item}</label>
+                <input 
+                  type="checkbox" 
+                  id={`task-${index}`} 
+                  checked={item.completed} 
+                  onChange={() => toggleComplete(index)} 
+                />
+                <label 
+                  htmlFor={`task-${index}`}
+                  style={{ textDecoration: item.completed ? 'line-through' : 'none' }} 
+                >
+                  {item.text}
+                </label>
                 <button onClick={() => {
                   setIsEditing(index); 
-                  setEditValue(item);  
+                  setEditValue(item.text);  
                 }}>Chỉnh sửa</button>
-                <button onClick={() => removeJob(item)}>Xóa</button>
+                <button onClick={() => removeWork(item.text)}>Xóa</button>
               </>
             )}
           </li>
@@ -61,6 +91,6 @@ const TodoList = () => {
       </ul>
     </div>
   );
-};
+}
 
 export default TodoList;

@@ -1,10 +1,10 @@
-// src/RandomColor/RandomColor.js
+
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 const RandomColor = () => {
   const color = useSelector(state => state.randomColor.color);
-  const history = useSelector(state => state.randomColor.history); // Lấy lịch sử từ Redux state
+  const history = useSelector(state => state.randomColor.history); 
   const dispatch = useDispatch();
 
   const changeColor = () => {
@@ -27,12 +27,12 @@ const RandomColor = () => {
       </button>
       <h1 style={{ color: 'white' }}>{color}</h1>
 
-      {/* Hiển thị lịch sử đổi màu */}
+
       <div style={{ marginTop: '20px', color: 'white' }}>
         <h2>Lịch Sử Đổi Màu:</h2>
         <ul>
           {history.map((col, index) => (
-            <li key={index} style={{ color: col }}>{col}</li> // Hiển thị từng màu trong lịch sử
+            <li key={index} style={{ color: col }}>{col}</li>
           ))}
         </ul>
       </div>

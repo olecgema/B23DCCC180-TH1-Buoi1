@@ -1,4 +1,4 @@
-// src/ImageSearch/imageSearchReducer.js
+
 const initialState = {
     images: [],
     query: '',

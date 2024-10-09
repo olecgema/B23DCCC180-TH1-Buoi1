@@ -1,4 +1,4 @@
-// src/RandomColor/randomColorReducer.js
+
 const initialState = {
     color: '#ffffff',
     history: [],
